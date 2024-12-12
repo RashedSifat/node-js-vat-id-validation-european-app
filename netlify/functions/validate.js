@@ -9,29 +9,45 @@ exports.handler = async (event) => {
         };
     }
 
-    const { country, vat } = JSON.parse(event.body);
-
-    if (!country || !vat) {
-        return {
-            statusCode: 400,
-            body: 'Country and VAT number are required',
-        };
-    }
-
-    const createClient = (endpoint) => {
-        return new Promise((resolve, reject) => {
-            soap.createClient(endpoint, (err, client) => {
-                if (err) reject(err);
-                else resolve(client);
-            });
-        });
-    };
-
-    const params = { countryCode: country, vatNumber: vat };
-
     try {
+        // Parse the incoming request body
+        const { country, vat } = JSON.parse(event.body || '{}');
+
+        if (!country || !vat) {
+            return {
+                statusCode: 400,
+                body: 'Country and VAT number are required',
+            };
+        }
+
+        console.log('Country:', country, 'VAT:', vat);
+
+        // Helper to create SOAP client
+        const createClient = (endpoint) => {
+            return new Promise((resolve, reject) => {
+                soap.createClient(endpoint, (err, client) => {
+                    if (err) reject(err);
+                    else resolve(client);
+                });
+            });
+        };
+
+        // Perform VAT validation
         const client = await createClient(endpoint);
-        const [result] = await client.checkVatAsync(params); // Ensure `checkVatAsync` is available in the WSDL client.
+        const params = { countryCode: country, vatNumber: vat };
+
+        const validateVat = (client, params) => {
+            return new Promise((resolve, reject) => {
+                client.checkVat(params, (err, result) => {
+                    if (err) reject(err);
+                    else resolve(result);
+                });
+            });
+        };
+
+        const result = await validateVat(client, params);
+
+        console.log('SOAP Response:', result);
 
         return {
             statusCode: 200,
@@ -44,10 +60,10 @@ exports.handler = async (event) => {
             }),
         };
     } catch (error) {
-        console.error('SOAP Validation Error:', error.message);
+        console.error('Validation Error:', error.message);
         return {
             statusCode: 500,
-            body: 'Error validating VAT. Please try again later.',
+            body: `Error validating VAT: ${error.message}`,
         };
     }
 };
