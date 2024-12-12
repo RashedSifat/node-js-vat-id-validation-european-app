@@ -5,6 +5,7 @@
   "description": "EU VAT validation",
   "author": "Gabriele Romanato <gabriele@gabrieleromanato.com>",
   "dependencies": {
+    "axios": "^1.7.9",
     "body-parse": "^0.1.0",
     "body-parser": "^1.20.3",
     "ejs": "^2.7.4",
