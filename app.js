@@ -29,10 +29,13 @@ app.get('/validate', async (req, res) => {
     // Parse the response from the VAT API
     const data = await response.json();
 
+    console.log(data.name);
+
     // Return the data received from the API
     res.status(200).json({
-      valid: data.isValid,
-      companyName: data.name || 'N/A',
+      valid: data.valid,
+      UserName: data.name,
+      companyName: data.traderName || 'N/A',
       companyAddress: data.traderAddress || 'N/A',
       countryCode: country,
       vatNumber: vat,
