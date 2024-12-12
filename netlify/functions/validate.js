@@ -13,6 +13,10 @@ exports.handler = async (event) => {
         // Get country and vat from query parameters (not from request body)
         const { country, vat } = event.queryStringParameters;
 
+        // Log the values for debugging
+        console.log("Country:", country);
+        console.log("VAT:", vat);
+
         // Ensure the required parameters are present
         if (!country || !vat) {
             return {
