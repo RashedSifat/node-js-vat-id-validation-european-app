@@ -23,7 +23,7 @@ exports.handler = async (event) => {
                 <label for="country">Country:</label>
                 <select name="country" id="country">
                     <% countries.forEach(country => { %>
-                        <option value="<%= country.code %>"><%= country.name %></option>
+                        <option value="<%= country.alpha2Code %>"><%= country.name %></option>
                     <% }) %>
                 </select>
                 <br>
