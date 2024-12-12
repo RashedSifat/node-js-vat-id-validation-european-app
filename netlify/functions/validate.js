@@ -56,6 +56,10 @@ exports.handler = async (event) => {
         // Return the validated result
         return {
             statusCode: 200,
+            headers: {
+                'Access-Control-Allow-Origin': '*', // Allow all origins
+                'Access-Control-Allow-Methods': 'GET', // Allow GET method
+              },
             body: JSON.stringify({
                 valid: result.valid,
                 status: result.userError,
