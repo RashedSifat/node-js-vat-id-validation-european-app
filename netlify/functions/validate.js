@@ -1,18 +1,17 @@
 exports.handler = async (event) => {
-    // Dynamically import node-fetch since it's an ES module in Node.js v14+
     const fetch = (await import('node-fetch')).default;
 
-    // Only allow POST requests
-    if (event.httpMethod !== 'POST') {
+    // Only allow GET requests
+    if (event.httpMethod !== 'GET') {
         return {
             statusCode: 405,
-            body: JSON.stringify({ error: 'Method Not Allowed' }),
+            body: JSON.stringify({ error: 'Method Not Allowed. Use GET.' }),
         };
     }
 
     try {
-        // Parse the request body
-        const { country, vat } = JSON.parse(event.body || '{}');
+        // Get country and vat from query parameters (not from request body)
+        const { country, vat } = event.queryStringParameters;
 
         // Ensure the required parameters are present
         if (!country || !vat) {
@@ -25,19 +24,23 @@ exports.handler = async (event) => {
         // Construct the API URL with dynamic country and VAT number
         const apiUrl = `https://ec.europa.eu/taxation_customs/vies/rest-api/ms/${country}/vat/${vat}`;
 
-        // Make the request to the VAT validation API
+        // Make the request to the VAT validation API (using GET method)
         const response = await fetch(apiUrl);
+
+        // Log the raw response text to debug the issue
+        const rawResponse = await response.text(); // Get the raw response as text
+        console.log('Raw API Response:', rawResponse);
 
         // Check if the response is successful
         if (!response.ok) {
             throw new Error(`VAT validation failed with status ${response.status}`);
         }
 
-        // Parse the response body as JSON
-        const result = await response.json();
+        // Attempt to parse the raw response as JSON
+        const result = JSON.parse(rawResponse); // Attempt JSON parsing
 
-        // Log the response for debugging
-        console.log('API Response:', result);
+        // Log the parsed response
+        console.log('Parsed API Response:', result);
 
         // Send a structured response to the client
         return {
