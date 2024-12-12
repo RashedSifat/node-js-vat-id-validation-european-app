@@ -10,17 +10,17 @@ exports.handler = async (event) => {
     }
 
     try {
-        // Parse the incoming request body
+        // Parse the request body
         const { country, vat } = JSON.parse(event.body || '{}');
 
         if (!country || !vat) {
             return {
                 statusCode: 400,
-                body: 'Country and VAT number are required',
+                body: JSON.stringify({ error: 'Country and VAT number are required' }),
             };
         }
 
-        console.log('Country:', country, 'VAT:', vat);
+        console.log('Input Data:', { country, vat });
 
         // Helper to create SOAP client
         const createClient = (endpoint) => {
@@ -32,10 +32,12 @@ exports.handler = async (event) => {
             });
         };
 
-        // Perform VAT validation
         const client = await createClient(endpoint);
         const params = { countryCode: country, vatNumber: vat };
 
+        console.log('SOAP Params:', params);
+
+        // Helper to validate VAT
         const validateVat = (client, params) => {
             return new Promise((resolve, reject) => {
                 client.checkVat(params, (err, result) => {
@@ -60,10 +62,10 @@ exports.handler = async (event) => {
             }),
         };
     } catch (error) {
-        console.error('Validation Error:', error.message);
+        console.error('Error:', error.message);
         return {
             statusCode: 500,
-            body: `Error validating VAT: ${error.message}`,
+            body: JSON.stringify({ error: `Internal Server Error: ${error.message}` }),
         };
     }
 };
