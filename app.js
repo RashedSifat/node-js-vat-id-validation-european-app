@@ -3,7 +3,7 @@ const fetch = require('node-fetch');
 const app = express();
 
 // Port for the server to listen on
-const port = process.env.PORT || 8888;
+// const port = process.env.PORT || 8888;
 
 // Route to handle GET request for VAT validation
 app.get('/validate', async (req, res) => {
