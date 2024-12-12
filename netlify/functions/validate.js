@@ -58,6 +58,8 @@ exports.handler = async (event) => {
             statusCode: 200,
             body: JSON.stringify({
                 valid: result.valid,
+                status: result.userError.
+                UserName: result.name,
                 companyName: result.traderName || 'N/A',
                 companyAddress: result.traderAddress || 'N/A',
                 countryCode: country,

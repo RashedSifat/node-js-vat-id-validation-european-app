@@ -34,7 +34,6 @@ app.get('/validate', async (req, res) => {
     // Return the data received from the API
     res.status(200).json({
       valid: data.valid,
-      UserName: data.name,
       companyName: data.traderName || 'N/A',
       companyAddress: data.traderAddress || 'N/A',
       countryCode: country,
