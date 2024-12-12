@@ -1,6 +1,7 @@
-const fetch = require('node-fetch'); // Ensure node-fetch is installed
-
 exports.handler = async (event) => {
+    // Dynamically import node-fetch since it's an ES module in Node.js v14+
+    const fetch = (await import('node-fetch')).default;
+
     // Only allow POST requests
     if (event.httpMethod !== 'POST') {
         return {
