@@ -19,7 +19,7 @@ exports.handler = async (event) => {
         </head>
         <body>
             <h1>Validate VAT Numbers</h1>
-            <form action="/validate" method="POST">
+            <form action="/validate" method="GET">
                 <label for="country">Country:</label>
                 <select name="country" id="country">
                     <% countries.forEach(country => { %>
