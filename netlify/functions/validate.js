@@ -31,7 +31,7 @@ exports.handler = async (event) => {
         // Make the request to the VAT validation API (using GET method)
         const response = await fetch(apiUrl);
 
-        // Log the raw response text to debug the issue
+        // Log the raw response text for debugging
         const rawResponse = await response.text(); // Get the raw response as text
         console.log('Raw API Response:', rawResponse);
 
@@ -40,13 +40,16 @@ exports.handler = async (event) => {
             throw new Error(`VAT validation failed with status ${response.status}`);
         }
 
-        // Attempt to parse the raw response as JSON
-        const result = JSON.parse(rawResponse); // Attempt JSON parsing
+        // Attempt to parse the response as JSON
+        const result = JSON.parse(rawResponse); // Parse the raw response into a JSON object
 
-        // Log the parsed response
+        // Log the parsed response for debugging
         console.log('Parsed API Response:', result);
 
-        // Send a structured response to the client
+        // Remove the newline character from VAT number, if present
+        const vatNumber = result.vatNumber ? result.vatNumber.trim() : 'N/A';
+
+        // Return the validated result
         return {
             statusCode: 200,
             body: JSON.stringify({
@@ -54,7 +57,7 @@ exports.handler = async (event) => {
                 companyName: result.traderName || 'N/A',
                 companyAddress: result.traderAddress || 'N/A',
                 countryCode: country,
-                vatNumber: vat,
+                vatNumber: vatNumber, // Cleaned VAT number
             }),
         };
     } catch (error) {
