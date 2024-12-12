@@ -11,8 +11,30 @@ exports.handler = async (event) => {
         };
     }
 
-    const templatePath = path.resolve(__dirname, '../../views/index.ejs');
-    const template = fs.readFileSync(templatePath, 'utf8');
+    const template = `
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>EU VAT Validation</title>
+        </head>
+        <body>
+            <h1>Validate VAT Numbers</h1>
+            <form action="/validate" method="POST">
+                <label for="country">Country:</label>
+                <select name="country" id="country">
+                    <% countries.forEach(country => { %>
+                        <option value="<%= country.code %>"><%= country.name %></option>
+                    <% }) %>
+                </select>
+                <br>
+                <label for="vat">VAT Number:</label>
+                <input type="text" id="vat" name="vat" required>
+                <br>
+                <button type="submit">Validate</button>
+            </form>
+        </body>
+        </html>
+    `;
 
     const html = ejs.render(template, { countries });
 
